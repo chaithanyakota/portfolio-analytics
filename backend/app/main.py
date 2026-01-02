@@ -1,7 +1,11 @@
 from fastapi import FastAPI
 
-app = FastAPI() # create FastAPI app instance
+app = FastAPI(title="Portfolio Analytics API") # create FastAPI app instance
 
 @app.get("/") # register a REST endpoint
-def health_check(): 
+def root(): 
+    return {"message": "portfolio-analytics API running"}
+
+@app.get("/health") # register a health check endpoint
+def health():
     return {"status": "ok"}
