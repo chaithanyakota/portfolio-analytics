@@ -6,12 +6,14 @@ from dotenv import load_dotenv
 load_dotenv()
 
 # fail if DATABASE_URL is not set
-DATABASE_URL = os.getenv("DATABASE_URL")
-if not DATABASE_URL:
-    raise ValueError("DATABASE_URL is not set")
+DATABASE_PUBLIC_URL = os.getenv("DATABASE_PUBLIC_URL")
+
+
+if not DATABASE_PUBLIC_URL:
+    raise ValueError("DATABASE_PUBLIC_URL is not set")
 
 # pool_pre_ping helps avoid stale connections.
-engine = create_engine(DATABASE_URL, pool_pre_ping=True)
+engine = create_engine(DATABASE_PUBLIC_URL, pool_pre_ping=True)
 
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 Base = declarative_base()
