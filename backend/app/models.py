@@ -32,10 +32,10 @@ class Transaction(Base):
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     portfolio_id = Column(UUID(as_uuid=True), ForeignKey("portfolios.id"), nullable=False)
 
-    symbol = Column(String, index=True, nullable=False)
-    quantity = Column(Float, nullable=False)
-    price = Column(Float, nullable=False)
-    side = Column(String, nullable=False)  # "buy" or "sell"
+    symbol = Column(String, index=True, nullable=False)      # e.g. AAPL
+    quantity = Column(Float, nullable=False)                # shares
+    price = Column(Float, nullable=False)                   # price per share at trade time
+    side = Column(String, nullable=False)                   # "buy" or "sell"
     timestamp = Column(DateTime, default=datetime.utcnow, nullable=False)
 
     portfolio = relationship("Portfolio", back_populates="transactions")
