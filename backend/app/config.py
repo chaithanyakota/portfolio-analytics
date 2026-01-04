@@ -1,3 +1,4 @@
+# config.py --- configuration settings for JWT authentication
 import os 
 from dotenv import load_dotenv
 

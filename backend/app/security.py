@@ -1,3 +1,5 @@
+# hashing helper functions for passwords
+
 from passlib.context import CryptContext
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")

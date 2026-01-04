@@ -1,3 +1,4 @@
+# jwt access token creation utility
 from datetime import datetime, timedelta, timezone
 from jose import jwt
 from .config import JWT_SECRET, JWT_ALGORITHM, ACCESS_TOKEN_EXPIRE_MINUTES
