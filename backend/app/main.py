@@ -6,6 +6,8 @@ from .deps import get_current_user
 from .models import User
 from .portfolios.router import router as portfolios_router
 from .transactions.router import router as transactions_router
+from app.analytics.router import router as analytics_router
+
 
 
 app = FastAPI(title="Portfolio Analytics API") # create FastAPI app instance
@@ -13,6 +15,7 @@ app = FastAPI(title="Portfolio Analytics API") # create FastAPI app instance
 app.include_router(auth_router)
 app.include_router(portfolios_router)
 app.include_router(transactions_router)
+app.include_router(analytics_router)
 
 @app.get("/") # register a REST endpoint
 def root(): 
