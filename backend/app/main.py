@@ -4,15 +4,17 @@ from . import models # noqa: F401
 from .auth import router as auth_router
 from .deps import get_current_user
 from .models import User
+from .portfolios.router import router as portfolios_router
 
 
 app = FastAPI(title="Portfolio Analytics API") # create FastAPI app instance
 
+app.include_router(auth_router)
+app.include_router(portfolios_router)
+
 @app.get("/") # register a REST endpoint
 def root(): 
     return {"message": "portfolio-analytics API running"}
-
-app.include_router(auth_router)
 
 @app.get("/health") # register a health check endpoint
 def health():
