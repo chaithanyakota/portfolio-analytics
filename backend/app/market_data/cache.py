@@ -3,14 +3,10 @@ from typing import Any, Dict, Optional, Tuple
 
 class TTLCache:
     """
-    Very small in-memory TTL cache.
+    TTL cache
     - Key: string 
     - Value: anything JSON-serializable
     - TTL: seconds until it expires
-
-    Why this exists:
-    - Market data APIs are rate-limited and slow.
-    - Caching keeps your app fast and avoids hitting limits.
     """
 
     def __init__(self):
