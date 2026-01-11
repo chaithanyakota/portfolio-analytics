@@ -4,16 +4,17 @@ from sqlalchemy.orm import Session
 from app.database import get_db
 from app.deps import get_current_user
 from app.models import Portfolio, User
+from app.schemas import PortfolioCreate
 
 router = APIRouter(prefix="/portfolios", tags=["portfolios"])
 
 @router.post("")
 def create_porfolio(
-    body: dict,
+    payload: PortfolioCreate,
     db: Session = Depends(get_db),
     user: User = Depends(get_current_user),
 ): 
-    name = body.get("name")
+    name = payload.name
     if not name:
         raise HTTPException(status_code=400, detail="Portfolio name is required")
     p = Portfolio(user_id = user.id, name=name)

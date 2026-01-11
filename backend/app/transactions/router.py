@@ -4,20 +4,21 @@ from sqlalchemy.orm import Session
 from app.database import get_db
 from app.deps import get_current_user
 from app.models import Portfolio, Transaction, User
+from app.schemas import TransactionCreate
 
 router = APIRouter(prefix="/transactions", tags=["transactions"])
 
 @router.post("")
 def create_transaction(
-    body: dict,
+    payload: TransactionCreate,
     db: Session = Depends(get_db),
     user: User = Depends(get_current_user),
 ):
-    portfolio_id = body.get("portfolio_id")
-    symbol = body.get("symbol")
-    quantity = body.get("quantity")
-    price = body.get("price")
-    side = body.get("side")  # buy/sell
+    portfolio_id = payload.portfolio_id
+    symbol = payload.symbol
+    quantity = payload.quantity
+    price = payload.price
+    side = payload.side  # buy/sell
 
     if not all([portfolio_id, symbol, quantity, price, side]):
         raise HTTPException(status_code=400, detail="missing required fields")
@@ -36,7 +37,7 @@ def create_transaction(
 
     t = Transaction(
         portfolio_id=p.id,
-        symbol=symbol.upper(),
+        symbol=symbol.upper().strip(),
         quantity=float(quantity),
         price=float(price),
         side=side,
