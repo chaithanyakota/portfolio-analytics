@@ -14,13 +14,6 @@ def fetch_quote(symbol: str) -> dict:
     """
     Call Finnhub quote endpoint:
     https://finnhub.io/docs/api/quote
-
-    Returns normalized data:
-    {
-      "symbol": "AAPL",
-      "price": 192.12,
-      "timestamp": 1700000000
-    }
     """
     symbol = symbol.upper().strip()
 

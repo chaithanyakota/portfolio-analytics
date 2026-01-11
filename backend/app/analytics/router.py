@@ -96,3 +96,76 @@ def get_portfolio_value(
         "total_unrealized_gain": total_value - total_cost_basis,
         "positions": positions,
     }
+
+@router.get("/portfolios/{portfolio_id}/summary")
+def get_portfolio_summary(
+    portfolio_id: str,
+    db: Session = Depends(get_db),
+    user: User = Depends(get_current_user),
+):
+    p = (
+        db.query(Portfolio)
+        .filter(Portfolio.id == portfolio_id, Portfolio.user_id == user.id)
+        .first()
+    )
+    if not p:
+        raise HTTPException(status_code=404, detail="portfolio not found")
+
+    txns = (
+        db.query(Transaction)
+        .filter(Transaction.portfolio_id == p.id)
+        .order_by(Transaction.timestamp.asc())
+        .all()
+    )
+    holdings = compute_holdings(txns)
+
+    positions = []
+    total_value = 0.0
+    total_cost_basis = 0.0
+
+    # first pass: compute totals
+    for sym, h in holdings.items():
+        quote = get_quote(sym)
+        price = float(quote["price"])
+
+        quantity = float(h["quantity"])
+        avg_cost = float(h["avg_cost"])
+
+        market_value = quantity * price
+        cost_basis = quantity * avg_cost
+
+        positions.append(
+            {
+                "symbol": sym,
+                "quantity": quantity,
+                "avg_cost": avg_cost,
+                "price": price,
+                "market_value": market_value,
+                "cost_basis": cost_basis,
+            }
+        )
+        total_value += market_value
+        total_cost_basis += cost_basis
+
+    gain = total_value - total_cost_basis
+    return_pct = (gain / total_cost_basis) if total_cost_basis > 0 else 0.0
+
+    # allocation
+    allocation = []
+    for pos in positions:
+        weight = (pos["market_value"] / total_value) if total_value > 0 else 0.0
+        allocation.append(
+            {"symbol": pos["symbol"], "weight": weight}
+        )
+
+    # sort biggest positions first (nice for UI)
+    allocation.sort(key=lambda x: x["weight"], reverse=True)
+
+    return {
+        "portfolio_id": portfolio_id,
+        "total_value": total_value,
+        "total_cost_basis": total_cost_basis,
+        "total_unrealized_gain": gain,
+        "total_return_pct": return_pct,
+        "allocation": allocation,
+    }
