@@ -5,6 +5,7 @@ from app.database import get_db
 from app.deps import get_current_user
 from app.models import Portfolio, Transaction, User
 from app.schemas import TransactionCreate
+from app.analytics.holdings import compute_holdings
 
 router = APIRouter(prefix="/transactions", tags=["transactions"])
 
@@ -34,6 +35,25 @@ def create_transaction(
     )
     if not p:
         raise HTTPException(status_code=404, detail="portfolio not found")
+    
+    # prevent selling more than you own
+    if payload.side == "sell":
+        txns = (
+            db.query(Transaction)
+            .filter(Transaction.portfolio_id == p.id)
+            .order_by(Transaction.timestamp.asc())
+            .all()
+        )
+        holdings = compute_holdings(txns)
+
+        sym = payload.symbol.upper().strip()
+        available = float(holdings.get(sym, {}).get("quantity", 0.0))
+
+        if payload.quantity > available:
+            raise HTTPException(
+                status_code=400,
+                detail=f"Cannot sell {payload.quantity} shares of {sym}; only {available} available."
+            )
 
     t = Transaction(
         portfolio_id=p.id,
