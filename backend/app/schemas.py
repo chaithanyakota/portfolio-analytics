@@ -38,8 +38,8 @@ class PortfolioCreate(BaseModel):
 class TransactionCreate(BaseModel):
     portfolio_id: UUID
     symbol: Symbol
-    quantity: float = Field(..., gt=0) # gt=0 -> must be > 0
-    price: float = Field(..., gt=0)
+    quantity: float = Field(..., gt=0, le=1_000_000)
+    price: float = Field(..., gt=0, le=10_000_000)
     side: Literal["buy", "sell"]
     timestamp: Optional[datetime] = None # Optional; default server time if not provided
 
