@@ -8,9 +8,21 @@ from .portfolios.router import router as portfolios_router
 from .transactions.router import router as transactions_router
 from app.analytics.router import router as analytics_router
 
+from fastapi.middleware.cors import CORSMiddleware
+
+
 
 
 app = FastAPI(title="Portfolio Analytics API") # create FastAPI app instance
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:3000"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 
 app.include_router(auth_router)
 app.include_router(portfolios_router)
