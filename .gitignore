@@ -1,106 +1,84 @@
-# ======================
-# Environment variables
-# ======================
-.env
-.env.*
-!.env.example
+############################################
+# OS / Editor
+############################################
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
 
-# ======================
+############################################
 # Python / FastAPI
-# ======================
-backend/.venv/
-backend/venv/
+############################################
 __pycache__/
 *.py[cod]
 *.pyo
 *.pyd
-.Python
-
-# ======================
-# Python tooling
-# ======================
-.pytest_cache/
-.mypy_cache/
-.ruff_cache/
-
-# ======================
-# Alembic
-# ======================
-alembic.ini
-# NOTE: keep alembic/versions/ (migrations) committed
-
-# ======================
-# Node / Next.js
-# ======================
-node_modules/
-frontend/node_modules/
-frontend/.next/
-frontend/out/
-frontend/.turbo/
-frontend/.vercel/
-
-# ======================
-# Logs
-# ======================
 *.log
-npm-debug.log*
-yarn-debug.log*
-pnpm-debug.log*
 
-# ======================
-# OS / Editor junk
-# ======================
-.DS_Store
-Thumbs.db
-.idea/
-.vscode/
+# Virtual environments
+.venv/
+venv/
+env/
 
-# ======================
-# Build artifacts
-# ======================
-dist/
+# Python build artifacts
 build/
+dist/
+*.egg-info/
 
+############################################
+# Environment variables / secrets
+############################################
+.env
+.env.*
+!.env.example
 
+############################################
+# Database
+############################################
+*.sqlite3
+*.db
 
-# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+############################################
+# Alembic
+############################################
+alembic/versions/__pycache__/
 
-# dependencies
-/node_modules
-/.pnp
-.pnp.*
-.yarn/*
-!.yarn/patches
-!.yarn/plugins
-!.yarn/releases
-!.yarn/versions
-
-# testing a
-/coverage
-
-# next.js
-/.next/
-/out/
-
-# production
-/build
-
-# misc
-.DS_Store
-*.pem
-
-# debug
+############################################
+# Node / Next.js
+############################################
+node_modules/
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
-.pnpm-debug.log*
+pnpm-debug.log*
 
-# env files (can opt-in for committing if needed)
-.env*
+############################################
+# Next.js build output
+############################################
+.next/
+out/
+build/
 
-# vercel
-.vercel
+############################################
+# Tailwind / PostCSS
+############################################
+.postcss-cache/
 
-# typescript
-*.tsbuildinfo
-next-env.d.ts
+############################################
+# Testing / Coverage
+############################################
+.coverage
+htmlcov/
+coverage/
+
+############################################
+# Logs
+############################################
+logs/
+*.log
+
+############################################
+# Temporary files
+############################################
+tmp/
+temp/
