@@ -19,7 +19,7 @@ app.add_middleware(
     CORSMiddleware,
     allow_origins=[
         "http://localhost:3000", 
-        "https://portfolio-analytics-production-5caa.up.railway.app"
+        "https://portfolio-analytics-rho.vercel.app"
     ],
     allow_credentials=True,
     allow_methods=["*"],
