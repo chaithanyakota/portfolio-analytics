@@ -17,7 +17,10 @@ app = FastAPI(title="Portfolio Analytics API") # create FastAPI app instance
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000"],
+    allow_origins=[
+        "http://localhost:3000", 
+        "https://portfolio-analytics-production-5caa.up.railway.app"
+    ],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
