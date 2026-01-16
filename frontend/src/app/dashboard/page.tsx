@@ -12,6 +12,7 @@ import { Input } from "@/components/Input";
 import { StatCard } from "@/components/StatCard";
 import { AllocationCard } from "@/components/AllocationCard"; 
 import { PositionsTable } from "@/components/PositionsTable";
+import { AddTransactionCard } from "@/components/AddTransactionsCard";
 
 function money(n: number) {
   return n.toLocaleString(undefined, { maximumFractionDigits: 2 });
@@ -90,6 +91,12 @@ export default function DashboardPage() {
     }
   }
 
+  async function refreshCurrent() {
+  if (!selectedId) return;
+  await loadAnalytics(selectedId);
+}
+
+
   function logout() {
     tokenStore.clear();
     setAuthToken(null);
@@ -116,7 +123,7 @@ export default function DashboardPage() {
               SaaS-style portfolio dashboard (MVP)
             </p>
           </div>
-          <Button onClick={logout} className="bg-zinc-900 text-zinc-100 hover:bg-zinc-800">
+          <Button onClick={logout} className="bg-white-900 text-zinc-100 hover:bg-zinc-800">
             Logout
           </Button>
         </div>
@@ -181,6 +188,15 @@ export default function DashboardPage() {
           <p className="mt-4 text-sm text-zinc-500">Loading analytics…</p>
         )}
       </div>
+
+      <div className="mt-6">
+        <AddTransactionCard
+          portfolios={portfolios}
+          selectedPortfolioId={selectedId}
+          onCreated={refreshCurrent}
+        />
+    </div>
+
     </main>
   );
 }
