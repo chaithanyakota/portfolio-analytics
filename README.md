@@ -80,6 +80,7 @@ The goal of this project was to design and build a realistic SaaS-style applicat
 
 ## Architecture
 
+```html
 Monorepo  
 ├── backend  
 │ ├── app  
@@ -97,6 +98,7 @@ Monorepo
 │ │ ├── components  
 │ │ └── lib  
 │ └── package.json  
+```
 
 The backend is organized by feature, not file type, to keep business logic isolated and easy to extend.
 
