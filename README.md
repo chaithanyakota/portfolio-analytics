@@ -3,7 +3,7 @@
 A full-stack financial analytics web application that allows users to track investment portfolios, record trades, and view real-time portfolio performance through a clean dashboard.
 
 **Live Demo:** https://portfolio-analytics-rho.vercel.app  
-**Backend API:** https://portfolio-analytics-production-5caa.up.railway.app  
+**Backend API:** https://portfolio-analytics-production-5caa.up.railway.app/docs
 
 ---
 
@@ -80,23 +80,23 @@ The goal of this project was to design and build a realistic SaaS-style applicat
 
 ## Architecture
 
-Monorepo
-├── backend
-│ ├── app
-│ │ ├── auth
-│ │ ├── portfolios
-│ │ ├── transactions
-│ │ ├── analytics
-│ │ └── main.py
-│ ├── alembic
-│ └── requirements.txt
-│
-├── frontend
-│ ├── src
-│ │ ├── app
-│ │ ├── components
-│ │ └── lib
-│ └── package.json
+Monorepo  
+├── backend  
+│ ├── app  
+│ │ ├── auth  
+│ │ ├── portfolios  
+│ │ ├── transactions  
+│ │ ├── analytics  
+│ │ └── main.py  
+│ ├── alembic  
+│ └── requirements.txt  
+│  
+├── frontend  
+│ ├── src  
+│ │ ├── app  
+│ │ ├── components  
+│ │ └── lib  
+│ └── package.json  
 
 The backend is organized by feature, not file type, to keep business logic isolated and easy to extend.
 
