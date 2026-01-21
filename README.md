@@ -7,13 +7,16 @@ A full-stack financial analytics web application that allows users to track inve
 
 ---
 
+
 ## Overview
 
-This project models how a real investment platform tracks holdings and computes portfolio metrics.
+This project models how a investment platform tracks holdings and computes portfolio metrics.
 
 Users can create portfolios, record buy/sell transactions, and view up-to-date portfolio value, allocation, and unrealized gains. The system focuses on **data correctness**, **clean APIs**, and **production-ready deployment**.
 
 The goal of this project was to design and build a realistic SaaS-style application, not just a demo UI.
+
+<img width="1456" height="837" alt="Screenshot 2026-01-21 at 12 12 15 AM" src="https://github.com/user-attachments/assets/12ae406e-ce36-458a-aeae-9629916958f8" />
 
 ---
 
