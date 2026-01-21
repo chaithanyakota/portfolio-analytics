@@ -10,7 +10,7 @@ import type { Portfolio, Summary, ValueResp } from "@/lib/types";
 import { Button } from "@/components/Button";
 import { Input } from "@/components/Input";
 import { StatCard } from "@/components/StatCard";
-import { AllocationCard } from "@/components/AllocationCard"; 
+import { AllocationCard } from "@/components/AllocationCard";
 import { PositionsTable } from "@/components/PositionsTable";
 import { AddTransactionCard } from "@/components/AddTransactionsCard";
 
@@ -92,10 +92,9 @@ export default function DashboardPage() {
   }
 
   async function refreshCurrent() {
-  if (!selectedId) return;
-  await loadAnalytics(selectedId);
-}
-
+    if (!selectedId) return;
+    await loadAnalytics(selectedId);
+  }
 
   function logout() {
     tokenStore.clear();
@@ -119,11 +118,12 @@ export default function DashboardPage() {
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-2xl font-semibold">Portfolio Analytics</h1>
-            <p className="mt-1 text-sm text-zinc-400">
-              SaaS-style portfolio dashboard (MVP)
-            </p>
+            <p className="mt-1 text-sm text-zinc-400">Portfolio Dashboard</p>
           </div>
-          <Button onClick={logout} className="bg-white-900 text-zinc-100 hover:bg-zinc-800">
+          <Button
+            onClick={logout}
+            className="bg-white-900 text-zinc-100 hover:bg-zinc-800"
+          >
             Logout
           </Button>
         </div>
@@ -171,10 +171,22 @@ export default function DashboardPage() {
 
         {/* Headline stats */}
         <div className="mt-6 grid gap-3 md:grid-cols-4">
-          <StatCard label="Total Value" value={headline?.totalValue ?? (loading ? "…" : "$0.00")} />
-          <StatCard label="Cost Basis" value={headline?.costBasis ?? (loading ? "…" : "$0.00")} />
-          <StatCard label="Unrealized Gain" value={headline?.gain ?? (loading ? "…" : "$0.00")} />
-          <StatCard label="Return %" value={headline?.ret ?? (loading ? "…" : "0.00%")} />
+          <StatCard
+            label="Total Value"
+            value={headline?.totalValue ?? (loading ? "…" : "$0.00")}
+          />
+          <StatCard
+            label="Cost Basis"
+            value={headline?.costBasis ?? (loading ? "…" : "$0.00")}
+          />
+          <StatCard
+            label="Unrealized Gain"
+            value={headline?.gain ?? (loading ? "…" : "$0.00")}
+          />
+          <StatCard
+            label="Return %"
+            value={headline?.ret ?? (loading ? "…" : "0.00%")}
+          />
         </div>
 
         {/* Charts + tables */}
@@ -187,16 +199,21 @@ export default function DashboardPage() {
         {loading && (
           <p className="mt-4 text-sm text-zinc-500">Loading analytics…</p>
         )}
+
+        {/* Add transaction card */}
+        <div className="mt-6">
+          <AddTransactionCard
+            portfolios={portfolios}
+            selectedPortfolioId={selectedId}
+            onCreated={refreshCurrent}
+          />
+        </div>
+
       </div>
 
-      <div className="mt-6">
-        <AddTransactionCard
-          portfolios={portfolios}
-          selectedPortfolioId={selectedId}
-          onCreated={refreshCurrent}
-        />
-    </div>
 
     </main>
+
+
   );
 }

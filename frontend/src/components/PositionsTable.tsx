@@ -1,4 +1,5 @@
 import { ValueResp } from "@/lib/types";
+import { Card } from "./Card";
 
 function fmt(n: number) {
   return n.toLocaleString(undefined, { maximumFractionDigits: 2 });
@@ -16,7 +17,8 @@ export function PositionsTable({ data }: { data: ValueResp | null }) {
   }
 
   return (
-    <div className="rounded-2xl border border-zinc-800 bg-zinc-950 p-4">
+    <Card title="Positions">
+      <div className="rounded-2xl border border-zinc-800 bg-zinc-950 p-4">
       <h3 className="text-sm font-semibold">Positions</h3>
       <div className="mt-3 overflow-x-auto">
         <table className="w-full text-sm">
@@ -45,5 +47,6 @@ export function PositionsTable({ data }: { data: ValueResp | null }) {
         </table>
       </div>
     </div>
+    </Card>
   );
 }
