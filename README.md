@@ -1,6 +1,6 @@
-# Portfolio Analytics Platform
+# Portfolio Dashboard
 
-A full-stack financial analytics web application that allows users to track investment portfolios, record trades, and view real-time portfolio performance through a clean dashboard.
+A full-stack financial web application that allows users to track investment portfolios, record trades, and view portfolio performance through a clean dashboard.
 
 **Live Demo:** https://portfolio-analytics-rho.vercel.app  
 **Backend API:** https://portfolio-analytics-production-5caa.up.railway.app/docs
@@ -14,7 +14,7 @@ This project models how a investment platform tracks holdings and computes portf
 
 Users can create portfolios, record buy/sell transactions, and view up-to-date portfolio value, allocation, and unrealized gains. The system focuses on **data correctness**, **clean APIs**, and **production-ready deployment**.
 
-The goal of this project was to design and build a realistic SaaS-style application, not just a demo UI.
+The goal of this project was to design and build a realistic SaaS style application.
 
 <img width="1456" height="837" alt="Screenshot 2026-01-21 at 12 12 15 AM" src="https://github.com/user-attachments/assets/12ae406e-ce36-458a-aeae-9629916958f8" />
 
@@ -37,7 +37,6 @@ The goal of this project was to design and build a realistic SaaS-style applicat
 ### Transactions
 
 - Buy and sell transactions with strict validation
-- Prevents selling more assets than owned
 - Automatic recomputation of holdings after every change
 
 ### Analytics
