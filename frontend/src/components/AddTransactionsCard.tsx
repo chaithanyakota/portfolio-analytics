@@ -3,9 +3,27 @@
 import { useEffect, useState } from "react";
 import { api } from "@/lib/api";
 import type { Portfolio } from "@/lib/types";
-import { Button } from "@/components/Button";
-import { Input } from "@/components/Input";
-import { Card } from "@/components/Card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { SymbolSearch } from "@/components/SymbolSearch";
+import {
+  Card,
+  CardAction,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { AlertCircleIcon, CheckCircleIcon, PlusIcon, XIcon } from "lucide-react";
 
 export function AddTransactionCard({
   portfolios,
@@ -17,13 +35,11 @@ export function AddTransactionCard({
   onCreated: () => Promise<void> | void;
 }) {
   const [open, setOpen] = useState(false);
-
   const [portfolioId, setPortfolioId] = useState(selectedPortfolioId);
-  const [symbol, setSymbol] = useState("AAPL");
+  const [symbol, setSymbol] = useState("");
   const [side, setSide] = useState<"buy" | "sell">("buy");
   const [quantity, setQuantity] = useState("1");
   const [price, setPrice] = useState("100");
-
   const [loading, setLoading] = useState(false);
   const [err, setErr] = useState<string | null>(null);
   const [ok, setOk] = useState<string | null>(null);
@@ -32,7 +48,8 @@ export function AddTransactionCard({
     if (selectedPortfolioId) setPortfolioId(selectedPortfolioId);
   }, [selectedPortfolioId]);
 
-  async function submit() {
+  async function submit(e: React.FormEvent) {
+    e.preventDefault();
     setErr(null);
     setOk(null);
 
@@ -56,91 +73,121 @@ export function AddTransactionCard({
       });
 
       setOk("Transaction added.");
-      setQuantity("1"); // keep symbol; reset qty
+      setQuantity("1");
       await onCreated();
-      setOpen(false); // collapse after success (feels SaaS)
-    } catch (e: any) {
-      setErr(e?.response?.data?.detail ?? "Failed to create transaction");
+      setOpen(false);
+    } catch (e: unknown) {
+      const axiosErr = e as { response?: { data?: { detail?: string } } };
+      setErr(axiosErr?.response?.data?.detail ?? "Failed to create transaction");
     } finally {
       setLoading(false);
     }
   }
 
   return (
-    <Card
-      title="Add transaction"
-      subtitle="Record a buy/sell and refresh analytics"
-      right={
-        <Button
-          onClick={() => setOpen((v) => !v)}
-          className="bg-white-900 text-zinc-100 hover:bg-zinc-800"
-        >
-          {open ? "Cancel" : "New"}
-        </Button>
-      }
-    >
-      {!open ? (
-        <p className="text-sm text-zinc-400">
-          Click <span className="text-zinc-200">New</span> to add a transaction.
-        </p>
-      ) : (
-        <div className="space-y-3">
-          {/* compact row layout */}
-          <div className="grid gap-3 md:grid-cols-5">
-            <div className="md:col-span-2">
-              <div className="text-xs text-zinc-400">Portfolio</div>
-              <select
-                className="mt-2 w-full rounded-lg border border-zinc-800 bg-zinc-950 px-3 py-2 text-sm"
-                value={portfolioId}
-                onChange={(e) => setPortfolioId(e.target.value)}
-              >
-                {portfolios.map((p) => (
-                  <option key={p.id} value={p.id}>
-                    {p.name}
-                  </option>
-                ))}
-              </select>
-            </div>
+    <Card>
+      <CardHeader>
+        <CardTitle className="text-sm">Add transaction</CardTitle>
+        <CardDescription>Record a buy/sell and refresh analytics</CardDescription>
+        <CardAction>
+          <Button
+            variant={open ? "ghost" : "outline"}
+            size="sm"
+            onClick={() => setOpen((v) => !v)}
+          >
+            {open ? <><XIcon /> Cancel</> : <><PlusIcon /> New</>}
+          </Button>
+        </CardAction>
+      </CardHeader>
 
-            <div>
-              <div className="text-xs text-zinc-400">Side</div>
-              <select
-                className="mt-2 w-full rounded-lg border border-zinc-800 bg-zinc-950 px-3 py-2 text-sm"
-                value={side}
-                onChange={(e) => setSide(e.target.value as "buy" | "sell")}
-              >
-                <option value="buy">buy</option>
-                <option value="sell">sell</option>
-              </select>
-            </div>
-
-            <div>
-              <div className="text-xs text-zinc-400">Symbol</div>
-              <Input className="mt-2" value={symbol} onChange={(e) => setSymbol(e.target.value)} />
-            </div>
-
-            <div className="flex gap-3">
-              <div className="w-1/2">
-                <div className="text-xs text-zinc-400">Qty</div>
-                <Input className="mt-2" value={quantity} onChange={(e) => setQuantity(e.target.value)} />
+      <CardContent>
+        {!open ? (
+          <p className="text-sm text-muted-foreground">
+            Click <span className="text-foreground font-medium">New</span> to
+            add a transaction.
+          </p>
+        ) : (
+          <form onSubmit={submit} className="space-y-4">
+            <div className="grid gap-4 md:grid-cols-5">
+              <div className="space-y-2 md:col-span-1">
+                <Label>Portfolio</Label>
+                <Select value={portfolioId} onValueChange={setPortfolioId}>
+                  <SelectTrigger className="w-full">
+                    <SelectValue placeholder="Select portfolio" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {portfolios.map((p) => (
+                      <SelectItem key={p.id} value={p.id}>
+                        {p.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
-              <div className="w-1/2">
-                <div className="text-xs text-zinc-400">Price</div>
-                <Input className="mt-2" value={price} onChange={(e) => setPrice(e.target.value)} />
+
+              <div className="space-y-2">
+                <Label>Side</Label>
+                <Select
+                  value={side}
+                  onValueChange={(v) => setSide(v as "buy" | "sell")}
+                >
+                  <SelectTrigger className="w-full">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="buy">Buy</SelectItem>
+                    <SelectItem value="sell">Sell</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="space-y-2 md:col-span-2">
+                <Label>Symbol</Label>
+                <SymbolSearch value={symbol} onSelect={setSymbol} />
+              </div>
+
+              <div className="flex gap-3">
+                <div className="w-1/2 space-y-2">
+                  <Label>Qty</Label>
+                  <Input
+                    value={quantity}
+                    onChange={(e) => setQuantity(e.target.value)}
+                  />
+                </div>
+                <div className="w-1/2 space-y-2">
+                  <Label>Price</Label>
+                  <Input
+                    value={price}
+                    onChange={(e) => setPrice(e.target.value)}
+                  />
+                </div>
               </div>
             </div>
-          </div>
 
-          {err && <p className="text-sm text-red-400">{err}</p>}
-          {ok && <p className="text-sm text-emerald-400">{ok}</p>}
+            {err && (
+              <Alert variant="destructive">
+                <AlertCircleIcon />
+                <AlertDescription>{err}</AlertDescription>
+              </Alert>
+            )}
+            {ok && (
+              <Alert>
+                <CheckCircleIcon />
+                <AlertDescription>{ok}</AlertDescription>
+              </Alert>
+            )}
 
-          <div className="flex justify-end">
-            <Button disabled={loading || portfolios.length === 0} onClick={submit}>
-              {loading ? "Adding..." : "Add"}
-            </Button>
-          </div>
-        </div>
-      )}
+            <div className="flex justify-end">
+              <Button
+                type="submit"
+                disabled={loading || portfolios.length === 0}
+              >
+                {loading ? "Adding..." : "Add transaction"}
+              </Button>
+            </div>
+          </form>
+        )}
+      </CardContent>
     </Card>
   );
 }

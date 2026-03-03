@@ -1,3 +1,11 @@
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+
 export function StatCard({
   label,
   value,
@@ -8,10 +16,16 @@ export function StatCard({
   sub?: string;
 }) {
   return (
-    <div className="rounded-2xl border border-zinc-800 bg-zinc-950 p-4">
-      <div className="text-xs text-zinc-400">{label}</div>
-      <div className="mt-1 text-2xl font-semibold">{value}</div>
-      {sub && <div className="mt-1 text-xs text-zinc-500">{sub}</div>}
-    </div>
+    <Card>
+      <CardHeader className="pb-2">
+        <CardDescription>{label}</CardDescription>
+        <CardTitle className="text-2xl tabular-nums">{value}</CardTitle>
+      </CardHeader>
+      {sub && (
+        <CardContent>
+          <p className="text-xs text-muted-foreground">{sub}</p>
+        </CardContent>
+      )}
+    </Card>
   );
 }

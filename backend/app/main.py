@@ -7,6 +7,7 @@ from .models import User
 from .portfolios.router import router as portfolios_router
 from .transactions.router import router as transactions_router
 from app.analytics.router import router as analytics_router
+from app.market_data.router import router as market_data_router
 
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -31,6 +32,7 @@ app.include_router(auth_router)
 app.include_router(portfolios_router)
 app.include_router(transactions_router)
 app.include_router(analytics_router)
+app.include_router(market_data_router)
 
 @app.get("/") # register a REST endpoint
 def root(): 
@@ -43,4 +45,3 @@ def health():
 @app.get("/me")
 def me(user: User = Depends(get_current_user)):
     return {"id": str(user.id), "email": user.email}
-

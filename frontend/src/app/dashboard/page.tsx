@@ -7,8 +7,27 @@ import { api, setAuthToken } from "@/lib/api";
 import { tokenStore } from "@/lib/auth";
 import type { Portfolio, Summary, ValueResp } from "@/lib/types";
 
-import { Button } from "@/components/Button";
-import { Input } from "@/components/Input";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Separator } from "@/components/ui/separator";
+import { AlertCircleIcon, LogOutIcon } from "lucide-react";
+
 import { StatCard } from "@/components/StatCard";
 import { AllocationCard } from "@/components/AllocationCard";
 import { PositionsTable } from "@/components/PositionsTable";
@@ -31,7 +50,6 @@ export default function DashboardPage() {
   const [loading, setLoading] = useState(false);
   const [err, setErr] = useState<string | null>(null);
 
-  // 1) auth guard: if no token, go login
   useEffect(() => {
     const token = tokenStore.get();
     if (!token) {
@@ -49,12 +67,12 @@ export default function DashboardPage() {
       const res = await api.get<Portfolio[]>("/portfolios");
       setPortfolios(res.data);
       if (res.data.length > 0) setSelectedId(res.data[0].id);
-    } catch (e: any) {
-      setErr(e?.response?.data?.detail ?? "Failed to load portfolios");
+    } catch (e: unknown) {
+      const axiosErr = e as { response?: { data?: { detail?: string } } };
+      setErr(axiosErr?.response?.data?.detail ?? "Failed to load portfolios");
     }
   }
 
-  // 2) whenever portfolio changes, load analytics
   useEffect(() => {
     if (!selectedId) return;
     void loadAnalytics(selectedId);
@@ -71,8 +89,9 @@ export default function DashboardPage() {
       ]);
       setSummary(s.data);
       setValueResp(v.data);
-    } catch (e: any) {
-      setErr(e?.response?.data?.detail ?? "Failed to load analytics");
+    } catch (e: unknown) {
+      const axiosErr = e as { response?: { data?: { detail?: string } } };
+      setErr(axiosErr?.response?.data?.detail ?? "Failed to load analytics");
     } finally {
       setLoading(false);
     }
@@ -86,8 +105,9 @@ export default function DashboardPage() {
       await api.post("/portfolios", { name });
       setNewName("");
       await loadPortfolios();
-    } catch (e: any) {
-      setErr(e?.response?.data?.detail ?? "Failed to create portfolio");
+    } catch (e: unknown) {
+      const axiosErr = e as { response?: { data?: { detail?: string } } };
+      setErr(axiosErr?.response?.data?.detail ?? "Failed to create portfolio");
     }
   }
 
@@ -113,64 +133,93 @@ export default function DashboardPage() {
   }, [summary]);
 
   return (
-    <main className="min-h-screen bg-zinc-950 text-zinc-100">
+    <main className="min-h-screen bg-background text-foreground">
       <div className="mx-auto max-w-6xl px-4 py-8">
+        {/* Header */}
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-semibold">Portfolio Analytics</h1>
-            <p className="mt-1 text-sm text-zinc-400">Portfolio Dashboard</p>
+            <h1 className="text-2xl font-semibold tracking-tight">
+              Portfolio Analytics
+            </h1>
+            <p className="mt-1 text-sm text-muted-foreground">
+              Portfolio Dashboard
+            </p>
           </div>
-          <Button
-            onClick={logout}
-            className="bg-white-900 text-zinc-100 hover:bg-zinc-800"
-          >
+          <Button variant="outline" onClick={logout}>
+            <LogOutIcon />
             Logout
           </Button>
         </div>
 
+        <Separator className="my-6" />
+
+        {/* Error alert */}
         {err && (
-          <div className="mt-4 rounded-xl border border-red-900/40 bg-red-950/30 px-4 py-3 text-sm text-red-300">
-            {err}
-          </div>
+          <Alert variant="destructive" className="mb-6">
+            <AlertCircleIcon />
+            <AlertDescription>{err}</AlertDescription>
+          </Alert>
         )}
 
         {/* Portfolio controls */}
-        <div className="mt-6 grid gap-3 md:grid-cols-3">
-          <div className="rounded-2xl border border-zinc-800 bg-zinc-950 p-4">
-            <div className="text-xs text-zinc-400">Portfolio</div>
-            <select
-              className="mt-2 w-full rounded-lg border border-zinc-800 bg-zinc-950 px-3 py-2 text-sm"
-              value={selectedId}
-              onChange={(e) => setSelectedId(e.target.value)}
-            >
-              {portfolios.map((p) => (
-                <option key={p.id} value={p.id}>
-                  {p.name}
-                </option>
-              ))}
-            </select>
-            {portfolios.length === 0 && (
-              <p className="mt-2 text-sm text-zinc-400">
-                No portfolios yet — create one.
-              </p>
-            )}
-          </div>
+        <div className="grid gap-4 md:grid-cols-3">
+          <Card>
+            <CardHeader className="pb-2">
+              <CardDescription>Portfolio</CardDescription>
+            </CardHeader>
+            <CardContent>
+              {portfolios.length === 0 ? (
+                <p className="text-sm text-muted-foreground">
+                  No portfolios yet — create one.
+                </p>
+              ) : (
+                <Select value={selectedId} onValueChange={setSelectedId}>
+                  <SelectTrigger className="w-full">
+                    <SelectValue placeholder="Select portfolio" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {portfolios.map((p) => (
+                      <SelectItem key={p.id} value={p.id}>
+                        {p.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              )}
+            </CardContent>
+          </Card>
 
-          <div className="rounded-2xl border border-zinc-800 bg-zinc-950 p-4 md:col-span-2">
-            <div className="text-xs text-zinc-400">Create portfolio</div>
-            <div className="mt-2 flex gap-2">
-              <Input
-                placeholder="e.g., Main"
-                value={newName}
-                onChange={(e) => setNewName(e.target.value)}
-              />
-              <Button onClick={createPortfolio}>Create</Button>
-            </div>
-          </div>
+          <Card className="md:col-span-2">
+            <CardHeader className="pb-2">
+              <CardDescription>Create portfolio</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="flex gap-2">
+                <div className="flex-1 space-y-1">
+                  <Label htmlFor="new-portfolio" className="sr-only">
+                    Portfolio name
+                  </Label>
+                  <Input
+                    id="new-portfolio"
+                    placeholder="e.g., Main"
+                    value={newName}
+                    onChange={(e) => setNewName(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") {
+                        e.preventDefault();
+                        createPortfolio();
+                      }
+                    }}
+                  />
+                </div>
+                <Button onClick={createPortfolio}>Create</Button>
+              </div>
+            </CardContent>
+          </Card>
         </div>
 
         {/* Headline stats */}
-        <div className="mt-6 grid gap-3 md:grid-cols-4">
+        <div className="mt-6 grid gap-4 md:grid-cols-4">
           <StatCard
             label="Total Value"
             value={headline?.totalValue ?? (loading ? "…" : "$0.00")}
@@ -189,18 +238,20 @@ export default function DashboardPage() {
           />
         </div>
 
-        {/* Charts + tables */}
+        {/* Charts + table */}
         <div className="mt-6 grid gap-6 md:grid-cols-2">
           <AllocationCard summary={summary} />
           <PositionsTable data={valueResp} />
         </div>
 
-        {/* Loading hint */}
+        {/* Loading indicator */}
         {loading && (
-          <p className="mt-4 text-sm text-zinc-500">Loading analytics…</p>
+          <p className="mt-4 text-sm text-muted-foreground">
+            Loading analytics…
+          </p>
         )}
 
-        {/* Add transaction card */}
+        {/* Add transaction */}
         <div className="mt-6">
           <AddTransactionCard
             portfolios={portfolios}
@@ -208,12 +259,7 @@ export default function DashboardPage() {
             onCreated={refreshCurrent}
           />
         </div>
-
       </div>
-
-
     </main>
-
-
   );
 }

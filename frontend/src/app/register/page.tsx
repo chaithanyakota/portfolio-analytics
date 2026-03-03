@@ -2,16 +2,24 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-
-
 import { api, setAuthToken } from "@/lib/api";
 import { tokenStore } from "@/lib/auth";
-import { Button } from "@/components/Button";
-import { Input } from "@/components/Input";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { AlertCircleIcon } from "lucide-react";
 
 export default function RegisterPage() {
   const router = useRouter();
-
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [err, setErr] = useState<string | null>(null);
@@ -29,50 +37,72 @@ export default function RegisterPage() {
       setAuthToken(token);
 
       router.push("/dashboard");
-    } catch (e: any) {
-      setErr(e?.response?.data?.detail ?? "Registration failed");
+    } catch (e: unknown) {
+      const axiosErr = e as { response?: { data?: { detail?: string } } };
+      setErr(axiosErr?.response?.data?.detail ?? "Registration failed");
     } finally {
       setLoading(false);
     }
   }
 
   return (
-    <main className="min-h-screen flex items-center justify-center px-4 bg-zinc-950 text-zinc-100">
-      <div className="w-full max-w-md rounded-2xl border border-zinc-800 bg-zinc-950 p-6">
-        <h1 className="text-2xl font-semibold">Create account</h1>
-        <p className="mt-1 text-sm text-zinc-400">
-          Make an account to start tracking portfolios.
-        </p>
+    <main className="flex min-h-screen items-center justify-center px-4">
+      <Card className="w-full max-w-md">
+        <CardHeader>
+          <CardTitle className="text-2xl">Create account</CardTitle>
+          <CardDescription>
+            Make an account to start tracking portfolios.
+          </CardDescription>
+        </CardHeader>
 
-        <form onSubmit={onSubmit} className="mt-6 space-y-3">
-          <Input
-            placeholder="Email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            autoComplete="email"
-          />
-          <Input
-            placeholder="Password"
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            autoComplete="new-password"
-          />
+        <form onSubmit={onSubmit}>
+          <CardContent className="space-y-4 pb-8">
+            <div className="space-y-2">
+              <Label htmlFor="email">Email</Label>
+              <Input
+                id="email"
+                type="email"
+                placeholder="you@example.com"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                autoComplete="email"
+                required
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="password">Password</Label>
+              <Input
+                id="password"
+                type="password"
+                placeholder="••••••••"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                autoComplete="new-password"
+                required
+              />
+            </div>
 
-          <Button disabled={loading} className="w-full">
-            {loading ? "Creating..." : "Create account"}
-          </Button>
+            {err && (
+              <Alert variant="destructive">
+                <AlertCircleIcon />
+                <AlertDescription>{err}</AlertDescription>
+              </Alert>
+            )}
+          </CardContent>
+
+          <CardFooter className="flex flex-col gap-4">
+            <Button type="submit" disabled={loading} className="w-full">
+              {loading ? "Creating..." : "Create account"}
+            </Button>
+            <p className="text-sm text-muted-foreground">
+              Already have an account?{" "}
+              <a className="text-foreground underline" href="/login">
+                Login
+              </a>
+            </p>
+          </CardFooter>
         </form>
-
-        {err && <p className="mt-3 text-sm text-red-400">{err}</p>}
-
-        <p className="mt-4 text-sm text-zinc-400">
-          Already have an account?{" "}
-          <a className="text-zinc-100 underline" href="/login">
-            Login
-          </a>
-        </p>
-      </div>
+      </Card>
     </main>
   );
 }

@@ -1,5 +1,20 @@
 import { ValueResp } from "@/lib/types";
-import { Card } from "./Card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { Badge } from "@/components/ui/badge";
 
 function fmt(n: number) {
   return n.toLocaleString(undefined, { maximumFractionDigits: 2 });
@@ -7,46 +22,54 @@ function fmt(n: number) {
 
 export function PositionsTable({ data }: { data: ValueResp | null }) {
   const positions = data?.positions ?? [];
-  if (!positions.length) {
-    return (
-      <div className="rounded-2xl border border-zinc-800 bg-zinc-950 p-4">
-        <h3 className="text-sm font-semibold">Positions</h3>
-        <p className="mt-2 text-sm text-zinc-400">No positions yet.</p>
-      </div>
-    );
-  }
 
   return (
-    <Card title="Positions">
-      <div className="rounded-2xl border border-zinc-800 bg-zinc-950 p-4">
-      <h3 className="text-sm font-semibold">Positions</h3>
-      <div className="mt-3 overflow-x-auto">
-        <table className="w-full text-sm">
-          <thead className="text-zinc-400">
-            <tr className="border-b border-zinc-800">
-              <th className="py-2 text-left font-medium">Symbol</th>
-              <th className="py-2 text-right font-medium">Qty</th>
-              <th className="py-2 text-right font-medium">Price</th>
-              <th className="py-2 text-right font-medium">Value</th>
-              <th className="py-2 text-right font-medium">Gain</th>
-            </tr>
-          </thead>
-          <tbody>
-            {positions.map((p) => (
-              <tr key={p.symbol} className="border-b border-zinc-900">
-                <td className="py-2">{p.symbol}</td>
-                <td className="py-2 text-right">{p.quantity.toFixed(4)}</td>
-                <td className="py-2 text-right">${fmt(p.price)}</td>
-                <td className="py-2 text-right">${fmt(p.market_value)}</td>
-                <td className="py-2 text-right">
-                  ${fmt(p.unrealized_gain)}
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-    </div>
+    <Card>
+      <CardHeader>
+        <CardTitle className="text-sm">Positions</CardTitle>
+        <CardDescription>Current holdings and market values</CardDescription>
+      </CardHeader>
+      <CardContent>
+        {positions.length === 0 ? (
+          <p className="text-sm text-muted-foreground">No positions yet.</p>
+        ) : (
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Symbol</TableHead>
+                <TableHead className="text-right">Qty</TableHead>
+                <TableHead className="text-right">Price</TableHead>
+                <TableHead className="text-right">Value</TableHead>
+                <TableHead className="text-right">Gain</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {positions.map((p) => (
+                <TableRow key={p.symbol}>
+                  <TableCell className="font-medium">{p.symbol}</TableCell>
+                  <TableCell className="text-right tabular-nums">
+                    {p.quantity.toFixed(4)}
+                  </TableCell>
+                  <TableCell className="text-right tabular-nums">
+                    ${fmt(p.price)}
+                  </TableCell>
+                  <TableCell className="text-right tabular-nums">
+                    ${fmt(p.market_value)}
+                  </TableCell>
+                  <TableCell className="text-right">
+                    <Badge
+                      variant={p.unrealized_gain >= 0 ? "default" : "destructive"}
+                      className="tabular-nums"
+                    >
+                      ${fmt(p.unrealized_gain)}
+                    </Badge>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        )}
+      </CardContent>
     </Card>
   );
 }

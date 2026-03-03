@@ -42,4 +42,3 @@ class TransactionCreate(BaseModel):
     price: float = Field(..., gt=0, le=10_000_000)
     side: Literal["buy", "sell"]
     timestamp: Optional[datetime] = None # Optional; default server time if not provided
-
