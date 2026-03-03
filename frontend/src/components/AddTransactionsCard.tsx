@@ -108,8 +108,8 @@ export function AddTransactionCard({
           </p>
         ) : (
           <form onSubmit={submit} className="space-y-4">
-            <div className="grid gap-4 md:grid-cols-5">
-              <div className="space-y-2 md:col-span-1">
+            <div className="grid gap-4 md:grid-cols-6">
+              <div className="space-y-2">
                 <Label>Portfolio</Label>
                 <Select value={portfolioId} onValueChange={setPortfolioId}>
                   <SelectTrigger className="w-full">
@@ -141,7 +141,7 @@ export function AddTransactionCard({
                 </Select>
               </div>
 
-              <div className="space-y-2 md:col-span-2">
+              <div className="space-y-2 md:col-span-3">
                 <Label>Symbol</Label>
                 <SymbolSearch value={symbol} onSelect={setSymbol} />
               </div>
@@ -171,9 +171,16 @@ export function AddTransactionCard({
               </Alert>
             )}
             {ok && (
-              <Alert>
+              <Alert className="relative">
                 <CheckCircleIcon />
                 <AlertDescription>{ok}</AlertDescription>
+                <button
+                  type="button"
+                  onClick={() => setOk(null)}
+                  className="absolute right-3 top-3 text-muted-foreground hover:text-foreground"
+                >
+                  <XIcon className="size-4" />
+                </button>
               </Alert>
             )}
 
